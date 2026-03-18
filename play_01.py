@@ -45,7 +45,7 @@ def inspect_page(url: str, browser_type: str = "chromium",
                 # Время загрузки страницы
                 start = time.perf_counter()
                 start_ = time.monotonic()
-                page.goto(url)
+                response = page.goto(url)
                 page.wait_for_load_state("load")
                 load_time = round(time.perf_counter() - start, 2)
                 load_time_ = round(time.monotonic() - start_, 2)
@@ -53,6 +53,7 @@ def inspect_page(url: str, browser_type: str = "chromium",
                 info = {"url": url,
                         "browser": browser_type,
                         "title": page.title(),
+                        "status": response.status,
                         "success": None,
                         "viewport": page.viewport_size,  # {'width': ..., 'height': ...}
                         "url_final": page.url,  # финальный URL (после редиректов)
@@ -77,13 +78,14 @@ def inspect_page(url: str, browser_type: str = "chromium",
     return info
 
 if __name__ == "__main__":
-    ipage = inspect_page(url=URL,
-                         browser_type="chromium",  # "chromium",
-                         headless=False,  screenshot=False, retries=3, timeout=550)
+    ipage = inspect_page(url=URL, browser_type="chromium",  # "chromium",
+                         headless=False,  screenshot=False,
+                         retries=3, timeout=550)  # 550 - на грани
     if not ipage["success"]:
         print(f"❌ Ошибка: {ipage['error']}")
     else:
         print(f"[{ipage['browser']}] {ipage['title']}\n"
+              f"Status: {ipage['status']}\n"
               f"Viewport: {ipage['viewport']}\n"
               f"Финальный URL: {ipage['url_final']}\n"
               f"Загрузка: {ipage['load_time']}c")

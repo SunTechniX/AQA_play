@@ -1,4 +1,4 @@
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
 
 if __name__ == "__main__":
@@ -11,6 +11,8 @@ if __name__ == "__main__":
         # print(page.title())
         txt = page.locator("#dn-default h1")
         txth1 = page.locator("text=Example Domain")
+        txth1.all_inner_texts()
+        expect(txth1).to_have_text("Example Domain")
         print(f"{txth1.text_content()=}")
         print(f"{txth1.inner_text()=}")
         browser.close()

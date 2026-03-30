@@ -14,6 +14,8 @@ if __name__ == "__main__":
             )
         page = browser.new_page()
         page.goto(URL)
+
+        # Task 01
         title_tab = page.title()
         # loc_h1 = page.locator("//h1[contains(text(), 'the-internet')]")
         loc_h1 = page.get_by_text("Welcome to the-internet")
@@ -22,11 +24,15 @@ if __name__ == "__main__":
         print(f"Сайт доступен.\n"
               f"Заголовок закладки браузера: '{title_tab}'\n"
               f"Заголовок на странице: '{title_h1}'")
-        # current_url = navigate_to_example("Form Authentication")
-        # assert "/login" in current_url, "Не тот URL"
-        # print(f"Перешли в: Form Authentication | URL: {current_url}")
-        page.get_by_role("link", name="Form Authentication").click()
 
+        # Task 02
+        # current_url = navigate_to_example("Form Authentication")
+        page.get_by_role("link", name="Form Authentication").click()
+        current_url = page.url
+        assert "/login" in current_url, "Не тот URL"
+        print(f"Перешли в: Form Authentication | URL: {current_url}")
+
+        # Task 03
         el_user = page.get_by_label("username")
         #el_user = page.locator("#username")
         el_pass = page.get_by_label("password")
@@ -45,10 +51,12 @@ if __name__ == "__main__":
         assert "/secure" in page.url, "Не тот URL"
         print(f"✅ Успешный вход! URL: {page.url}")
 
+        # Task 04
         page.get_by_role("link", name="Logout").click()
         assert "/login" in page.url
         print(f"✅ Успешный выход! URL: {page.url}")
 
+        # Task 05
         page.goto(URL)
         current_url = navigate_to_example("Checkboxes")
 

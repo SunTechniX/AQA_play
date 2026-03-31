@@ -1,3 +1,4 @@
+import time
 import os
 
 from dotenv import load_dotenv
@@ -8,13 +9,31 @@ load_dotenv()
 
 URL = "https://the-internet.herokuapp.com/"
 TEXT_TO_FIND = "the-internet"
-TEXT_LOGIN = "/login"
-TEXT_SECURE = "/secure"
-TEXT_FORM = "Form Authentication"
-TEXT_CHECKBOXES = "Checkboxes"
+LINK_LOGIN = "/login"
+LINK_SECURE = "/secure"
+
+TITLE_FORM = "Form Authentication"
+TITLE_CHECKBOXES = "Checkboxes"
+TITLE_DROPDOWN = "Dropdown"
+TITLE_INPUTS = "Inputs"
+TITLE_HOVERS = "Hovers"
+TITLE_JS_ALERTS = "JavaScript Alerts"
+TITLE_FILE_UPLOAD = "File Upload"
+
+LINK_DROPDOWN = "/dropdown"
+OPTION_0 = "Please select an option"
+OPTION_1 = "Option 1"
+OPTION_2 = "Option 2"
+NUMBER_123 = "123"
+NUMBER_456 = "456"
+TEXT_NAME_USER1 = "name: user1"
+BUTTON_JS_ALERTS = "Click for JS Alert"
+MSG_CLICK_JS_ALLERT = "You successfully clicked an alert"
+
+FILE_NAME = "test_upload.txt"
 
 
-def navigate_to_example(example_name: str):
+def navigate_to_example(page, example_name: str):
     link = page.get_by_text(example_name)
     link.click()
     return page.url
@@ -27,13 +46,18 @@ def assert_text_in_url(page_url: str, text_in: str, ):
         f"Факт: '{page_url}'"
 
 
-if __name__ == "__main__":
+def _assert_selected(selected_option, selected_text):
+    assert selected_option in selected_text, \
+        f"\nОжидался текст: '{selected_option}'\n" \
+        f"На странице оказался текст: '{selected_text}'"
+
+
+def test_task_01():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
         page.goto(URL)
 
-        # Task 01
         assert_text_in_url(page.url, TEXT_TO_FIND)
         loc_h1 = page.locator("h1.heading")
         text_h1 = loc_h1.text_content()
@@ -43,12 +67,24 @@ if __name__ == "__main__":
             f"Актуальный текст заголовка: '{text_h1}'"
         print(f"T1: ✅ Сайт доступен. Заголовок: '{text_h1}'")
 
-        # Task 02
-        link_form = navigate_to_example(TEXT_FORM)
-        assert_text_in_url(link_form, TEXT_LOGIN)
+
+def test_task_02():
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
+        page.goto(URL)
+
+        link_form = navigate_to_example(page, TITLE_FORM)
+        assert_text_in_url(link_form, LINK_LOGIN)
         print(f"T2: ✅ Перешли в: Form Authentication | URL: {link_form}")
 
-        # Task 03
+
+def test_task_03():
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
+        page.goto(URL)
+
         field_username = page.locator("#username")
         field_password = page.locator("#password")
         env_username = os.getenv("USER")
@@ -58,18 +94,28 @@ if __name__ == "__main__":
 
         btn_login = page.locator("//button/i[contains(@class, 'sign-in')]")
         btn_login.click()
-        assert_text_in_url(page.url, TEXT_SECURE)
+        assert_text_in_url(page.url, LINK_SECURE)
         print(f"T3: ✅ Успешный вход! URL: {page.url}")
 
-        # Task 04
+
+def test_task_04():
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
+        page.goto(URL)
+
         btn_logout = page.locator(".button[href='/logout']")
         btn_logout.click()
-        assert_text_in_url(page.url, TEXT_LOGIN)
+        assert_text_in_url(page.url, LINK_LOGIN)
         print(f"T4: ✅ Успешный выход! URL: {page.url}")
 
-        # Task 05
+def test_task_05():
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
         page.goto(URL)
-        link_form = navigate_to_example(TEXT_CHECKBOXES)
+
+        link_form = navigate_to_example(page, TITLE_CHECKBOXES)
         chkbox1 = page.locator("//form[@id='checkboxes']/input[1]")
         chkbox2 = page.locator("//form[@id='checkboxes']/input[2]")
 
@@ -84,3 +130,96 @@ if __name__ == "__main__":
 
         print(f"T5: ✅ Checkbox 1: checked={chkbox1.is_checked()}\n"
               f"T5: ✅ Checkbox 2: checked={chkbox2.is_checked()}")
+
+
+def test_task_06():
+
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
+        page.goto(URL)
+
+        link_form = navigate_to_example(page, TITLE_DROPDOWN)
+        assert_text_in_url(link_form, LINK_DROPDOWN)
+        selected_option = page.locator("[selected='selected']")
+        _assert_selected(OPTION_0, selected_option.inner_text())
+
+        drop_list = page.locator("#dropdown")
+        drop_list.select_option("1")
+        _assert_selected(OPTION_1, selected_option.inner_text())
+
+        drop_list.select_option("2")
+        _assert_selected(OPTION_2, selected_option.inner_text())
+
+        print(f"✅ Выбрано: {selected_option.inner_text()}")
+
+
+def test_task_07():
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
+        page.goto(URL)
+
+        link_form = navigate_to_example(page, TITLE_INPUTS)
+        field = page.locator("input[type='number']")
+        field.fill(NUMBER_123)
+        _assert_selected(NUMBER_123, field.input_value())
+
+        field.clear()
+        field.fill(NUMBER_456)
+        _assert_selected(NUMBER_456, field.input_value())
+
+        print(f"✅ Введено: {field.input_value()}")
+
+
+def test_task_08():
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
+        page.goto(URL)
+
+        link_form = navigate_to_example(page, TITLE_HOVERS)
+        field = page.locator("input[type='number']")
+
+        # figures = page.locator(".figure:nth-child(3)")
+        figures = page.locator("//div[@class='figure'][1]")
+        fig_caption = figures.locator(".figcaption h5")
+        figures.hover()
+        assert fig_caption.is_visible(), f"Текст '{TEXT_NAME_USER1}' не видим"
+        _assert_selected(TEXT_NAME_USER1, fig_caption.inner_text())
+
+        print(f"✅ Навели на изображение. Текст: '{fig_caption.inner_text()}'")
+
+
+def test_task_09():
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
+        page.goto(URL)
+
+        link_form = navigate_to_example(page, TITLE_JS_ALERTS)
+        btn_js_alerts = page.get_by_role("button", name=BUTTON_JS_ALERTS)
+        btn_js_alerts.click()
+        time.sleep(3)
+        page.on("dialog", lambda d: d.accept())
+        result = page.locator("#result")
+        _assert_selected(MSG_CLICK_JS_ALLERT, result.inner_text())
+
+        print(f"✅ Alert принят. Сообщение: '{result.inner_text()}'")
+
+
+def test_task_10():
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
+        page.goto(URL)
+
+        link_form = navigate_to_example(page, TITLE_FILE_UPLOAD)
+        field_file_upload = page.locator("#file-upload")
+        field_file_upload.fill(FILE_NAME)
+        btn_upload = page.locator("#file-submit")
+        btn_upload.click()
+
+
+if __name__ == "__main__":
+    test_task_10()

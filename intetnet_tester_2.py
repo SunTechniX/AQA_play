@@ -1,5 +1,6 @@
 import time
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
@@ -181,10 +182,15 @@ def test_task_08():
         link_form = navigate_to_example(page, TITLE_HOVERS)
         field = page.locator("input[type='number']")
 
-        # figures = page.locator(".figure:nth-child(3)")
-        figures = page.locator("//div[@class='figure'][1]")
-        fig_caption = figures.locator(".figcaption h5")
-        figures.hover()
+        figures_xpath = page.locator("//div[@class='figure']")
+        figures_css = page.locator(".figure")
+        print(f"{figures_xpath.count()} {figures_css.count()}")
+        # figure = page.locator(".figure:nth-child(3)")
+        figure = page.locator("//div[@class='figure'][1]")
+        # figure = figures_css.all()[0]
+        figure = figures_css.first
+        fig_caption = figure.locator(".figcaption h5")
+        figure.hover()
         assert fig_caption.is_visible(), f"Текст '{TEXT_NAME_USER1}' не видим"
         _assert_selected(TEXT_NAME_USER1, fig_caption.inner_text())
 
@@ -192,6 +198,10 @@ def test_task_08():
 
 
 def test_task_09():
+
+    def accept_dialog(dialog):
+        return dialog.accept()
+
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
@@ -201,7 +211,8 @@ def test_task_09():
         btn_js_alerts = page.get_by_role("button", name=BUTTON_JS_ALERTS)
         btn_js_alerts.click()
         time.sleep(3)
-        page.on("dialog", lambda d: d.accept())
+        page.on("dialog", accept_dialog)
+        # page.on("dialog", lambda d: d.accept())
         result = page.locator("#result")
         _assert_selected(MSG_CLICK_JS_ALLERT, result.inner_text())
 
@@ -215,11 +226,16 @@ def test_task_10():
         page.goto(URL)
 
         link_form = navigate_to_example(page, TITLE_FILE_UPLOAD)
+
+        #file_upload = Path(__file__).parent / FILE_NAME
+
         field_file_upload = page.locator("#file-upload")
-        field_file_upload.fill(FILE_NAME)
+        # field_file_upload.set_input_files(file_upload)
+        field_file_upload.set_input_files(FILE_NAME)
+
         btn_upload = page.locator("#file-submit")
         btn_upload.click()
 
 
 if __name__ == "__main__":
-    test_task_10()
+    test_task_08()

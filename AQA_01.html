@@ -1,0 +1,58 @@
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Title</title>
+        <style>
+            li:nth-child(1) {
+                color:red;
+            }
+            li:nth-child(2) {
+                color:darkgreen;
+                font-weight:600;
+            }
+            .dt {
+                color:darkblue;
+                font-weight:700;
+            }
+            #mr {
+                color:darkorange;
+                font-weight:700;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="outer"><div any="text-block">
+            <p>ТЕКСТ 0 <b>Жирный</b></p>
+            <p>ТЕКСТ 3 <i>Жирный</i></p>
+            <p>ТЕКСТ 6 <u>Жирный</u></p>
+        </div></div>
+        <div>
+            <h2>Заголовок 2</h2>
+            <h3>Заголовок 3</h3>
+            <h4>Заголовок 4</h4>
+        </div>
+        <ol type="a">
+            <li>Запись 1</li>
+            <li>Запись 2</li>
+            <li class="dt" name="record">Запись 3
+                <ol>
+                    <li>Имя                                        <br>А</li>
+                    <li attr="text of list" disabled>Имя Б</li>
+                    <li attr="text inside list">Имя В</li>
+                    <li attr="end of text">Имя Г
+                        <button>Кнопочка</button>
+                    </li>
+                    <li class="ttt">Имя Д</li>
+                </ol>
+            </li>
+            <li id="mr">Запись 4</li>
+            <li>Запись 5</li>
+        </ol>
+        <input type="text" value="Какой-то текст">
+        <textarea>Область текста</textarea>
+        <br>
+        <a href="https://yandex.ru">Сылка</a><br>
+        <img src="Toolsqa.jpg" width="35%">
+        <img src="pic.webp" width="25%">
+    </body>
+</html>

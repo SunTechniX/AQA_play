@@ -3,12 +3,13 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from playwright.sync_api import sync_playwright
-
+from playwright.sync_api import sync_playwright, expect
 
 load_dotenv()
 
-URL = "https://the-internet.herokuapp.com/"
+BASE_URL = "https://the-internet.herokuapp.com"
+USR_DYN_LOAD2 = "/dynamic_loading/2"
+
 TEXT_TO_FIND = "the-internet"
 LINK_LOGIN = "/login"
 LINK_SECURE = "/secure"
@@ -20,6 +21,7 @@ TITLE_INPUTS = "Inputs"
 TITLE_HOVERS = "Hovers"
 TITLE_JS_ALERTS = "JavaScript Alerts"
 TITLE_FILE_UPLOAD = "File Upload"
+TITLE_DYN_LOAD = "Dynamic Loading"
 
 LINK_DROPDOWN = "/dropdown"
 OPTION_0 = "Please select an option"
@@ -57,7 +59,7 @@ def test_task_01():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         assert_text_in_url(page.url, TEXT_TO_FIND)
         loc_h1 = page.locator("h1.heading")
@@ -73,7 +75,7 @@ def test_task_02():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         link_form = navigate_to_example(page, TITLE_FORM)
         assert_text_in_url(link_form, LINK_LOGIN)
@@ -84,7 +86,7 @@ def test_task_03():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         field_username = page.locator("#username")
         field_password = page.locator("#password")
@@ -103,7 +105,7 @@ def test_task_04():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         btn_logout = page.locator(".button[href='/logout']")
         btn_logout.click()
@@ -114,7 +116,7 @@ def test_task_05():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         link_form = navigate_to_example(page, TITLE_CHECKBOXES)
         chkbox1 = page.locator("//form[@id='checkboxes']/input[1]")
@@ -138,7 +140,7 @@ def test_task_06():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         link_form = navigate_to_example(page, TITLE_DROPDOWN)
         assert_text_in_url(link_form, LINK_DROPDOWN)
@@ -159,7 +161,7 @@ def test_task_07():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         link_form = navigate_to_example(page, TITLE_INPUTS)
         field = page.locator("input[type='number']")
@@ -177,7 +179,7 @@ def test_task_08():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         link_form = navigate_to_example(page, TITLE_HOVERS)
         field = page.locator("input[type='number']")
@@ -205,7 +207,7 @@ def test_task_09():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         link_form = navigate_to_example(page, TITLE_JS_ALERTS)
         btn_js_alerts = page.get_by_role("button", name=BUTTON_JS_ALERTS)
@@ -223,7 +225,7 @@ def test_task_10():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
-        page.goto(URL)
+        page.goto(BASE_URL)
 
         link_form = navigate_to_example(page, TITLE_FILE_UPLOAD)
 
@@ -237,5 +239,38 @@ def test_task_10():
         btn_upload.click()
 
 
+def test_task_11():
+    with (sync_playwright() as drv):
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
+        page = browser.new_page()
+        # page.goto(BASE_URL)
+        #
+        # navigate_to_example(page, TITLE_DYN_LOAD)
+        #
+        # # navigate_to_example(page,
+        # #                     "Example 1: Element on page that is hidden")
+        # # btn_start = page.locator("#start")
+        # # btn_start.click()
+        #
+        # # finish_text = page.locator("#finish")
+        # # txt = finish_text.inner_text()
+        # # print(txt, finish_text.is_visible())
+        #
+        # navigate_to_example(page,
+        #                     "Example 2: Element rendered after the fact")
+        # # btn_start2 = page.locator("#start")
+        page.goto(f"{BASE_URL}{USR_DYN_LOAD2}")
+
+        btn_start2 = page.get_by_role("button", name="Start")
+        btn_start2.click()
+
+        finish_text2 = page.locator("#finish")
+        expect(finish_text2).to_be_visible()
+        expect(finish_text2).to_contain_text("Worl")
+        txt = finish_text2.inner_text()
+        assert "Hello World" in txt
+        print(txt, finish_text2.is_visible())
+
+
 if __name__ == "__main__":
-    test_task_08()
+    test_task_11()

@@ -5,8 +5,8 @@ from playwright.sync_api import sync_playwright
 URL = "file:///D:/Data/py_code/EDU_zone/AQA/AQA_play/AQA_01.html"
 
 if __name__ == "__main__":
-    with (sync_playwright() as p):
-        browser = p.chromium.launch(headless=False, slow_mo=1000)
+    with sync_playwright() as drv:
+        browser = drv.chromium.launch(headless=False, slow_mo=1000)
         page = browser.new_page()
         page.goto(URL)
         element_text = page.locator("[name='record'] li:nth-child(1)")

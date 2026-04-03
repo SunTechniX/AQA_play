@@ -52,7 +52,8 @@ class TestLoc:
 
 
     def test_task_05(self, page):
-        link_form = navigate_to_example(page, TITLE_CHECKBOXES)
+        main_page = MainPage(page)
+        link_form = main_page.navigate_to_example(TITLE_CHECKBOXES)
         chkbox1 = page.locator("//form[@id='checkboxes']/input[1]")
         chkbox2 = page.locator("//form[@id='checkboxes']/input[2]")
 
@@ -70,7 +71,8 @@ class TestLoc:
 
 
     def test_task_06(self, page):
-        link_form = navigate_to_example(page, TITLE_DROPDOWN)
+        main_page = MainPage(page)
+        link_form = main_page.navigate_to_example(TITLE_DROPDOWN)
         assert_text_in_url(link_form, LINK_DROPDOWN)
         selected_option = page.locator("[selected='selected']")
         assert_selected(OPTION_0, selected_option.inner_text())

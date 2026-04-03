@@ -52,7 +52,8 @@ class TestLoc:
 
 
     def test_task_05(self, page):
-        link_form = navigate_to_example(page, TITLE_CHECKBOXES)
+        main_page = MainPage(page)
+        link_form = main_page.navigate_to_example(TITLE_CHECKBOXES)
         chkbox1 = page.locator("//form[@id='checkboxes']/input[1]")
         chkbox2 = page.locator("//form[@id='checkboxes']/input[2]")
 

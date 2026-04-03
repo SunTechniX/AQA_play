@@ -1,6 +1,7 @@
 from playwright.sync_api import sync_playwright
 
 BASE_URL = "https://the-internet.herokuapp.com/"
+TITLE = "the-internet"
 
 
 with sync_playwright() as drv:
@@ -8,3 +9,7 @@ with sync_playwright() as drv:
     page = browser.new_page()
     page.goto(BASE_URL)
     page.wait_for_timeout(200)
+    el_head = page.get_by_role("heading", name="to the-internet")
+    el_head_text = el_head.inner_text()
+    assert TITLE in el_head_text, \
+        f"Заголовок '{el_head_text}' не содержит '{TITLE}'"

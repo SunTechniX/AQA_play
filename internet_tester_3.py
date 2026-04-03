@@ -1,5 +1,6 @@
 from playwright.sync_api import sync_playwright
 
+
 BASE_URL = "https://the-internet.herokuapp.com/"
 TITLE = "the-internet"
 

@@ -10,6 +10,9 @@ load_dotenv()
 BASE_URL = "https://the-internet.herokuapp.com/"
 TITLE = "the-internet"
 TITLE_FORM_AUTH = "Form Authentication"
+TITLE_DROPDOWN = "Dropdown"
+
+PAGE_LOGIN = "/login"
 
 
 @pytest.fixture
@@ -17,7 +20,10 @@ def page():
     with sync_playwright() as drv:
         browser = drv.chromium.launch(headless=False)
         # print("Начало работы браузера")
-        yield browser.new_page()
+        page_ = browser.new_page()
+        page_.set_default_timeout(7000)
+        page_.goto(BASE_URL)
+        yield page_
         browser.close()
         # print("Завершение работы браузера")
 
@@ -33,33 +39,30 @@ def assert_text_in_url_print(page, text_expected: str, msg: str = ""):
     print(f"\n{msg}URL: {page.url}")
 
 
+def assert_subtext_in_text(subtext: str, text: str, msg: str = ""):
+    assert subtext in text, \
+        f"{msg}'{text}' не содержит '{subtext}'"
+
+
 def test_01(page):
-    # 🌐26x01: Базовый вход на сайт
+    """ 🌐26x01: Базовый вход на сайт """
     # print("-- Начало Тест-кейс 1")
-    page.goto(BASE_URL)
     page.wait_for_timeout(200)
 
     el_head = page.get_by_role("heading", name="to the-internet")
     el_head_text = el_head.inner_text()
-
-    # if TITLE not in el_head_text:
-    #     raise f"Заголовок '{el_head_text}' не содержит '{TITLE}'"
-    assert TITLE in el_head_text, \
-        f"Заголовок '{el_head_text}' не содержит '{TITLE}'"
-    # print("== Завершение Тест-кейс 1")
+    assert_subtext_in_text(TITLE,  el_head_text, "Заголовок ")
 
 
 def test_02(page):
-    # 🌐26x02: Навигация по ссылкам
-    page.goto(BASE_URL)
+    """ 🌐26x02: Навигация по ссылкам """
     navigate_to_example(page, TITLE_FORM_AUTH)
-    assert_text_in_url_print(page, "/login",
+    assert_text_in_url_print(page, PAGE_LOGIN,
                              "✅ Перешли в: Form Authentication | ")
 
 
 def test_03(page):
-    # 🌐26x03: Форма логина (Fill + Click)
-    page.goto(BASE_URL)
+    """ 🌐26x03: Форма логина (Fill + Click) """
     navigate_to_example(page, TITLE_FORM_AUTH)
     field_username = page.locator("#username")
     field_password = page.locator("#password")
@@ -72,5 +75,25 @@ def test_03(page):
     assert_text_in_url_print(page, "/secure",
                              "✅ Успешный вход! ")
 
-# if __name__ == "__main__":
-#     t_01()
+
+def test_04(page):
+    """
+    🌐26x04: Выход из системы (Logout)
+
+    :param: page - фикстура браузер + страница
+    :return: None
+    """
+    test_03(page)
+    btn_logout = page.get_by_role("link", name="Logout")
+    btn_logout.click()
+    assert_text_in_url_print(page, PAGE_LOGIN,
+                             "✅ Успешный выход! ")
+
+
+def test_06(page):
+    navigate_to_example(page, TITLE_DROPDOWN)
+    dropdown = page.locator("#dropdown")
+    select_1 = page.locator("#dropdown option:nth-child(1)")
+    select_1_text = select_1.inner_text()
+    assert_subtext_in_text("Please select an option",  select_1_text, "Элемент ")
+    dropdown.click()

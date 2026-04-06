@@ -8,6 +8,8 @@ TITLE = "the-internet"
 with sync_playwright() as drv:
     browser = drv.chromium.launch(headless=False)
     page = browser.new_page()
+
+    # 🌐26x01: Базовый вход на сайт
     page.goto(BASE_URL)
     page.wait_for_timeout(200)
     el_head = page.get_by_role("heading", name="to the-internet")

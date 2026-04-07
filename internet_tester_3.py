@@ -18,7 +18,7 @@ PAGE_LOGIN = "/login"
 @pytest.fixture
 def page():
     with sync_playwright() as drv:
-        browser = drv.chromium.launch(headless=False)
+        browser = drv.firefox.launch(headless=False)
         # print("Начало работы браузера")
         page_ = browser.new_page()
         page_.set_default_timeout(7000)
@@ -97,3 +97,11 @@ def test_06(page):
     select_1_text = select_1.inner_text()
     assert_subtext_in_text("Please select an option",  select_1_text, "Элемент ")
     dropdown.click()
+
+def test_07(page):
+    navigate_to_example(page, "Inputs")
+    field = page.locator("input[type='number']")
+    field.fill("123")
+    page.wait_for_timeout(2000)
+    field.clear()
+    page.wait_for_timeout(2000)

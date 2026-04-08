@@ -4,7 +4,6 @@ import pytest
 from dotenv import load_dotenv
 from playwright.sync_api import Page, sync_playwright
 
-
 load_dotenv()
 
 BASE_URL = "https://the-internet.herokuapp.com/"

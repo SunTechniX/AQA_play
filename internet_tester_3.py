@@ -97,6 +97,7 @@ def test_06(page):
     assert_subtext_in_text("Please select an option",  select_1_text, "Элемент ")
     dropdown.click()
 
+
 def test_07(page):
     navigate_to_example(page, "Inputs")
     field = page.locator("input[type='number']")

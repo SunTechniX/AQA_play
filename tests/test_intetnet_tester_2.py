@@ -2,7 +2,7 @@ import time
 
 from playwright.sync_api import expect
 
-from tests.conftest import page
+# from tests.conftest import page
 from tests.data import BASE_URL, USR_DYN_LOAD2, TEXT_TO_FIND, LINK_LOGIN, \
     LINK_SECURE, TITLE_FORM, TITLE_CHECKBOXES, TITLE_DROPDOWN, TITLE_INPUTS, \
     TITLE_HOVERS, TITLE_JS_ALERTS, TITLE_FILE_UPLOAD, LINK_DROPDOWN, OPTION_0, \

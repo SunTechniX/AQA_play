@@ -11,7 +11,16 @@ if __name__ == "__main__":
         page.goto(f"{BASE_URL}{SELECT}")
 
         dropdown_menu = page.locator("#withOptGroup")
-        dropdown_list = dropdown_menu.get_by_role("option")
+        dropdown_list = page.locator("#withOptGroup").get_by_role("option")
+        assert dropdown_list.count() == 0, "кол-во элементов не 0"
         dropdown_menu.click()
-        print(dropdown_list.count())
+        assert dropdown_list.count() == 6, \
+            "Кол-во элементов отличается от ожидаемого"
+        print(dropdown_menu.count(), dropdown_list.count())
         print(dropdown_list.all_text_contents())
+        items = dropdown_list.all()
+        filtered = dropdown_list.filter(has_text="Group 1, option 1")
+        print(filtered.count())
+        print(filtered.all_text_contents())
+        filtered.first.click()
+

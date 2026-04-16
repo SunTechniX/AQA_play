@@ -32,7 +32,8 @@ def page():  # -> Page
         browser.close()
         # конец
 
-def test_01(page: Page):
+def test_01(page):
+    page.goto(BASE_URL)
     print(f"{type(page)}")
     el = page.get_by_role("link", name="Form Authentication")
     el.click()

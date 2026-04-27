@@ -1,10 +1,14 @@
 import os
+from playwright.sync_api import Page, expect
 
 from dotenv import load_dotenv
 
 from data.data_names import TITLE, TITLE_FORM_AUTH, TITLE_DROPDOWN, \
     PAGE_LOGIN
+from data.data_urls import BASE_URL
+from pages.HoversPage.HoversChecks import HoversChecks
 from pages.dropdown_page import DropdownPage
+from pages.HoversPage.HoversSteps import HoversSteps
 from pages.inputs_page import InputsPage
 from pages.secure_page import SecurePage
 from pages.login_page import LoginPage
@@ -70,3 +74,21 @@ def test_07(page):
     inputs_page.page.wait_for_timeout(2000)
     inputs_page.field.clear()
     inputs_page.page.wait_for_timeout(2000)
+
+def test_08(page):
+    main_page = MainPage(page)
+    main_page.navigate_to_example("Hovers")
+    HoversSteps(page).move_cursor_hover_img1()
+    txt_expected = "name: user1"
+    HoversChecks(page).wait_for_text_under_img1(txt_expected)
+    HoversChecks(page).check_visible_text_under_img1()
+    print(f"✅ Навели на изображение. Текст: {txt_expected}")
+
+def test_hover_effect(page: Page):
+    page.goto(BASE_URL + "/hovers")
+    first_figure = page.locator(".figure").first
+    first_figure.hover()
+    name_text = first_figure.locator(".figcaption > h5")
+    expect(name_text).to_be_visible()
+    actual_name = name_text.inner_text()
+    print(f"✅ Навели на изображение. Текст: '{actual_name.strip()}'")

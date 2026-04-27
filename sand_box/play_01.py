@@ -60,7 +60,7 @@ def inspect_page(url: str, browser_type: str = "chromium",
                         "load_time": f"{load_time} | {load_time_}"
                         }
                 if screenshot:
-                    screen_dir = Path("output/screenshots/")
+                    screen_dir = Path("../output/screenshots/")
                     screen_dir.mkdir(parents=True, exist_ok=True)
                     safe_name = get_safe_name(url)
                     screen_file = f"{browser_type}_{safe_name}.png"

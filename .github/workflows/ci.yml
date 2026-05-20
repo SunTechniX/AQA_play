@@ -3,7 +3,7 @@ name: Run My Playwright Tests
 on:
   push:
     branches: [main, develop]
-  pull_requests:
+  pull_request:
     branches: [main, develop]
   workflow_dispatch:
 

@@ -58,9 +58,17 @@ jobs:
 
     - name: -= SHOW TIME =-
       run: date
-    - name: -= RUN MY TESTS HERE =-
+    - name: -= RUN MY TESTS with Allure =-
       run: |
-        pytest ./tests2/test_inet_tester_3.py -v --tb=short
+        pytest ./tests2/test_inet_tester_3.py --alluredir=allure-results --clean-alluredir -v --tb=short
+
+    - name: Upload Allure results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-results-${{ github.run_number }}
+        path: allure-results/
+        retention-days: 7
 
   report:
     needs: my_test

@@ -3,6 +3,29 @@ name: Run My Playwright Tests
 on:
   schedule:
     - cron: '16 * * * *'  # Каждый день в xx:xx UTC
+  workflow_dispatch:
+    inputs:
+      test_marker:
+        description: 'Pytest marker (empty = all tests)'
+        required: false
+        default: ''
+        type: string
+      browser:
+        description: 'Browser to use'
+        required: false
+        default: 'chromium'
+        type: choice
+        options: [chromium, firefox, webkit]
+      full_report:
+        description: 'Generate full Allure report'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -23,6 +46,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         playwright install --with-deps chromium firefox
+    - name: -= SHOW TIME =-
+      run: date
     - name: -= RUN MY TESTS HERE =-
       run: |
         pytest ./tests2/test_inet_tester_3.py -v --tb=short

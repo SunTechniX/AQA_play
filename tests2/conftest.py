@@ -7,7 +7,7 @@ from data.data_urls import BASE_URL
 @pytest.fixture
 def page():
     with sync_playwright() as drv:
-        browser = drv.firefox.launch(headless=False)
+        browser = drv.firefox.launch(headless=True)
         # print("Начало работы браузера")
         page_ = browser.new_page()
         page_.set_default_timeout(7_000)

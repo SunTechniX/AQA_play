@@ -2,7 +2,7 @@ name: Run My Playwright Tests
 
 on:
   schedule:
-    - cron: '16 * * * *'  # Каждый день в xx:xx UTC
+    - cron: '28 * * * *'  # Каждый день в xx:xx UTC
   workflow_dispatch:
     inputs:
       test_marker:
@@ -46,6 +46,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         playwright install --with-deps chromium firefox
+
+    - name: 💾 Save versions
+      id: versions
+      run: |
+        echo "python-version=$(python --version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+        echo "playwright-version=$(pip show playwright | grep Version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+        echo "pytest-version=$(pip show pytest | grep Version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+
     - name: -= SHOW TIME =-
       run: date
     - name: -= RUN MY TESTS HERE =-

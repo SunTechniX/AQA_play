@@ -143,6 +143,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report
           destination_dir: reports  # Отчёт будет доступен по: https://<user>.github.io/<repo>/reports/
+          force_orphan: true
 
       - name: 📋 Post Allure Report link to Summary
         if: always() && github.ref == 'refs/heads/develop'

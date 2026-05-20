@@ -6,7 +6,7 @@ URL = "https://example.com"
 if __name__ == "__main__":
     with sync_playwright() as p:
         browser = p.chromium.launch_persistent_context(
-            user_data_dir="my_cookie",
+            user_data_dir="../my_cookie",
             headless=False, slow_mo=1000
             )
         page = browser.new_page()

@@ -3,9 +3,11 @@ from playwright.sync_api import sync_playwright
 
 URL = "https://the-internet.herokuapp.com/"
 
+
 def navigate_to_example(example_name: str) -> str:
     page.locator(f"text={example_name}").click()
     return page.url
+
 
 if __name__ == "__main__":
     with sync_playwright() as p:

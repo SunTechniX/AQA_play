@@ -1,10 +1,8 @@
 name: Run My Playwright Tests
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+  schedule:
+    - cron: '10 6 * * *'  # Каждый день в 06:10 UTC
   workflow_dispatch:
 
 jobs:

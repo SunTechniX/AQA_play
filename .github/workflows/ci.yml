@@ -1,8 +1,10 @@
 name: Run My Playwright Tests
 
 on:
-  schedule:
-    - cron: '28 * * * *'  # Каждый день в xx:xx UTC
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
   workflow_dispatch:
     inputs:
       test_marker:
@@ -28,7 +30,7 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  my_test:
     runs-on: ubuntu-latest
     outputs:
       python-version: ${{ steps.versions.outputs.python-version }}
@@ -59,3 +61,72 @@ jobs:
     - name: -= RUN MY TESTS HERE =-
       run: |
         pytest ./tests2/test_inet_tester_3.py -v --tb=short
+
+  report:
+    needs: my_test
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Download Allure artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          merge-multiple: true
+          path: allure-results
+
+      - name: 📝 Generate environment.properties + executor.json
+        run: |
+          echo "🔍 Creating environment and executor files..."
+          
+          # Создаём environment.properties
+          echo "Python.version=${{ needs.test.outputs.python-version }}" > allure-results/environment.properties
+          echo "OS.name=$(uname -s)" >> allure-results/environment.properties
+          echo "OS.version=$(uname -r)" >> allure-results/environment.properties
+          echo "Playwright.version=${{ needs.test.outputs.playwright-version }}" >> allure-results/environment.properties
+          echo "Pytest.version=${{ needs.test.outputs.pytest-version }}" >> allure-results/environment.properties
+          echo "Repository=${{ github.repository }}" >> allure-results/environment.properties
+          echo "Branch=${{ github.ref_name }}" >> allure-results/environment.properties
+          echo "Run.Number=${{ github.run_number }}" >> allure-results/environment.properties
+          echo "Run.ID=${{ github.run_id }}" >> allure-results/environment.properties
+          echo "Triggered.by=${{ github.actor }}" >> allure-results/environment.properties
+          echo "Workflow=${{ github.workflow }}" >> allure-results/environment.properties
+          echo "Date=$(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> allure-results/environment.properties
+          
+          # Создаём executor.json
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          REPORT_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/"
+          
+          echo "{" > allure-results/executor.json
+          echo "  \"name\": \"GitHub Actions\"," >> allure-results/executor.json
+          echo "  \"type\": \"github-actions\"," >> allure-results/executor.json
+          echo "  \"url\": \"${RUN_URL}\"," >> allure-results/executor.json
+          echo "  \"buildOrder\": ${{ github.run_number }}," >> allure-results/executor.json
+          echo "  \"buildName\": \"${{ github.workflow }} #${{ github.run_number }}\"," >> allure-results/executor.json
+          echo "  \"buildUrl\": \"${RUN_URL}\"," >> allure-results/executor.json
+          echo "  \"reportUrl\": \"${REPORT_URL}\"" >> allure-results/executor.json
+          echo "}" >> allure-results/executor.json
+          
+          echo "✅ Created files:"
+          cat allure-results/environment.properties
+          echo ""
+          cat allure-results/executor.json
+
+      - name: Install Allure CLI
+        run: |
+          wget -q https://github.com/allure-framework/allure2/releases/download/2.41.0/allure-2.41.0.tgz
+          tar -xf allure-2.41.0.tgz -C /tmp/
+          echo "/tmp/allure-2.41.0/bin" >> $GITHUB_PATH
+
+      - name: Generate Allure Report
+        run: |
+          allure generate allure-results -o allure-report --clean
+
+      - name: 📦 Upload Allure Report (ZIP)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-${{ github.run_number }}
+          path: allure-report/
+          retention-days: 2
+          compression-level: 6

@@ -57,7 +57,7 @@ jobs:
         echo "pytest-version=$(pip show pytest | grep Version | cut -d' ' -f2)" >> $GITHUB_OUTPUT
     - name: -= RUN MY TESTS with Allure =-
       run: |
-        pytest ./tests2/test_inet_tester_3.py --alluredir=allure-results --clean-alluredir -v --tb=short
+        pytest ./tests2/test_inet_tester_3.py --alluredir=allure-results -v --tb=short
 
     - name: Upload Allure results
       if: always()

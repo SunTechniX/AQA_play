@@ -1,0 +1,14 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","567","test_06","tests2","2026-05-21","passed","2026-05-21","","test_inet_tester_3","",""
+"","267","test_hover_effect","tests2","2026-05-21","passed","2026-05-21","","test_inet_tester_3","",""
+"
+    🌐26x04: Выход из системы (Logout)
+
+    :param: page - фикстура браузер + страница
+    :return: None
+    ","585","test_04","tests2","2026-05-21","failed","2026-05-21","","test_inet_tester_3","",""
+"","373","test_08","tests2","2026-05-21","passed","2026-05-21","","test_inet_tester_3","",""
+" 🌐26x01: Базовый вход на сайт ","62","test_01","tests2","2026-05-21","passed","2026-05-21","","test_inet_tester_3","",""
+"","4352","test_07","tests2","2026-05-21","passed","2026-05-21","","test_inet_tester_3","",""
+" 🌐26x03: Форма логина (Fill + Click) ","715","test_03","tests2","2026-05-21","failed","2026-05-21","","test_inet_tester_3","",""
+" 🌐26x02: Навигация по ссылкам ","195","test_02","tests2","2026-05-21","passed","2026-05-21","","test_inet_tester_3","",""

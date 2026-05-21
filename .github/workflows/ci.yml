@@ -152,3 +152,36 @@ jobs:
           echo "**🔗 Online Report**: <a href=\"${REPORT_URL}\" target=\"_blank\">${REPORT_URL}</a>" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "💡 Вы можете скачать allure-отчёт **allure-report-${RUN_NUMBER}.zip** внизу в секции артефактов." >> $GITHUB_STEP_SUMMARY
+
+  notify:
+    needs: [my_test, report]
+    runs-on: ubuntu-latest
+    if: always()  # Отправлять даже при падении
+
+    steps:
+      - name: Get job status
+        id: job_status
+        run: |
+          if [[ "${{ needs.my_test.result }}" == "success" ]]; then
+            echo "status=✅ УСПЕХ" >> $GITHUB_OUTPUT
+            echo "color=green" >> $GITHUB_OUTPUT
+          else
+            echo "status=❌ ПРОВАЛ" >> $GITHUB_OUTPUT
+            echo "color=red" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send Telegram Notification
+        uses: appleboy/telegram-action@v2
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: markdown
+          message: |
+            🧪 **Playwright Tests** ${{ steps.job_status.outputs.status }}
+
+            📌 Workflow: `${{ github.workflow }}`  
+            🔗 [Run #${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            📂 Branch: `${{ github.ref_name }}`
+            👤 Triggered by: @${{ github.actor }}
+
+            📊 [Allure Report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/)

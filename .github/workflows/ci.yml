@@ -171,13 +171,13 @@ jobs:
           fi
 
       - name: Send Telegram Notification
-        uses: appleboy/telegram-action@v2
+        uses: appleboy/telegram-action@1.10.0
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           format: markdown
           message: |
-            🧪 **Playwright Tests** ${{ steps.job_status.outputs.status }}
+            **Playwright Tests** ${{ steps.job_status.outputs.status }}
 
             📌 Workflow: `${{ github.workflow }}`  
             🔗 [Run #${{ github.run_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})

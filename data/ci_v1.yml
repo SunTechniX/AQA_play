@@ -85,9 +85,17 @@ jobs:
           echo "🔍 Creating environment and executor files..."
           
           # Создаём environment.properties
+          echo "Python.version=${{ needs.test.outputs.python-version }}" > allure-results/environment.properties
+          echo "OS.name=$(uname -s)" >> allure-results/environment.properties
+          echo "OS.version=$(uname -r)" >> allure-results/environment.properties
+          echo "Playwright.version=${{ needs.test.outputs.playwright-version }}" >> allure-results/environment.properties
+          echo "Pytest.version=${{ needs.test.outputs.pytest-version }}" >> allure-results/environment.properties
           echo "Repository=${{ github.repository }}" >> allure-results/environment.properties
+          echo "Branch=${{ github.ref_name }}" >> allure-results/environment.properties
           echo "Run.Number=${{ github.run_number }}" >> allure-results/environment.properties
+          echo "Run.ID=${{ github.run_id }}" >> allure-results/environment.properties
           echo "Triggered.by=${{ github.actor }}" >> allure-results/environment.properties
+          echo "Workflow=${{ github.workflow }}" >> allure-results/environment.properties
           echo "Date=$(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> allure-results/environment.properties
           
           # Создаём executor.json

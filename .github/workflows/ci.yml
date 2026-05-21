@@ -171,7 +171,7 @@ jobs:
           fi
 
       - name: Send Telegram Notification
-        uses: appleboy/telegram-action@1.10.0
+        uses: appleboy/telegram-action@1.0.1
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
